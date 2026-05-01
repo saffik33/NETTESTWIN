@@ -1,6 +1,5 @@
 """IP geolocation service with in-memory cache for traceroute map."""
 
-import asyncio
 import logging
 from dataclasses import dataclass
 
@@ -11,8 +10,8 @@ logger = logging.getLogger(__name__)
 # Simple in-memory cache: IP -> GeoLocation
 _cache: dict[str, "GeoLocation | None"] = {}
 
-GEO_API_URL = "http://ip-api.com/json/{ip}?fields=status,country,city,lat,lon,isp,as,query"
-BATCH_API_URL = "http://ip-api.com/batch?fields=status,country,city,lat,lon,isp,as,query"
+GEO_API_URL = "https://ip-api.com/json/{ip}?fields=status,country,city,lat,lon,isp,as,query"
+BATCH_API_URL = "https://ip-api.com/batch?fields=status,country,city,lat,lon,isp,as,query"
 
 
 @dataclass

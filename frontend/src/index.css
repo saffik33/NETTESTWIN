@@ -234,11 +234,15 @@ select:focus-visible,
   outline: none;
 }
 
-/* Dark mode glass-input padding */
+/* Dark mode glass-input */
 .dark .glass-input {
   color: #e5e7eb;
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
+}
+
+.dark select.glass-input option {
+  color: #0f1e34;
 }
 
 /* Light mode glass-table variants */

@@ -35,10 +35,10 @@ export default function NetworkHealthPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <SummaryCard label="Avg Latency" value={formatLatency(pingStats?.avg_latency)} subtitle="Last 24h" index={0} />
-          <SummaryCard label="Avg Jitter" value={formatLatency(pingStats?.avg_jitter)} subtitle="Last 24h" index={1} />
-          <SummaryCard label="Packet Loss" value={formatPercent(pingStats?.avg_packet_loss)} subtitle="Last 24h" index={2} />
-          <SummaryCard label="Tests" value={pingStats?.test_count?.toString() ?? '--'} subtitle="Last 24h" index={3} />
+          <SummaryCard label="Avg Latency" value={formatLatency(pingStats?.test_count ? pingStats.avg_latency : null)} subtitle="Last 24h" index={0} />
+          <SummaryCard label="Avg Jitter" value={formatLatency(pingStats?.test_count ? pingStats.avg_jitter : null)} subtitle="Last 24h" index={1} />
+          <SummaryCard label="Packet Loss" value={formatPercent(pingStats?.test_count ? pingStats.avg_packet_loss : null)} subtitle="Last 24h" index={2} />
+          <SummaryCard label="Tests" value={pingStats?.test_count ? pingStats.test_count.toString() : '--'} subtitle="Last 24h" index={3} />
         </div>
       )}
 

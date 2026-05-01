@@ -95,10 +95,10 @@ export default function DashboardPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <SummaryCard label="Avg Download" value={formatSpeed(stats?.avg_download)} subtitle="Last 24 hours" icon={<Zap size={18} />} index={0} />
-          <SummaryCard label="Avg Upload" value={formatSpeed(stats?.avg_upload)} subtitle="Last 24 hours" icon={<ArrowUp size={18} />} index={1} />
-          <SummaryCard label="Max Download" value={formatSpeed(stats?.max_download)} subtitle="Last 24 hours" icon={<Zap size={18} />} index={2} />
-          <SummaryCard label="Tests Run" value={stats?.test_count?.toString() ?? '--'} subtitle="Last 24 hours" icon={<Clock size={18} />} index={3} />
+          <SummaryCard label="Avg Download" value={formatSpeed(stats?.test_count ? stats.avg_download : null)} subtitle="Last 24 hours" icon={<Zap size={18} />} index={0} />
+          <SummaryCard label="Avg Upload" value={formatSpeed(stats?.test_count ? stats.avg_upload : null)} subtitle="Last 24 hours" icon={<ArrowUp size={18} />} index={1} />
+          <SummaryCard label="Max Download" value={formatSpeed(stats?.test_count ? stats.max_download : null)} subtitle="Last 24 hours" icon={<Zap size={18} />} index={2} />
+          <SummaryCard label="Tests Run" value={stats?.test_count ? stats.test_count.toString() : '--'} subtitle="Last 24 hours" icon={<Clock size={18} />} index={3} />
         </div>
       )}
 

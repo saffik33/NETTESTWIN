@@ -50,9 +50,9 @@ async def _probe_loop() -> None:
     global _consecutive_failures, _current_outage_id
 
     while _running:
-        is_up, latency = await _ping_probe(PROBE_TARGET)
-
         try:
+            is_up, latency = await _ping_probe(PROBE_TARGET)
+
             async with AsyncSessionLocal() as db:
                 probe = UptimeProbe(
                     is_up=is_up,
@@ -106,7 +106,7 @@ async def _probe_loop() -> None:
 
                 await db.commit()
         except Exception as e:
-            logger.error("Uptime probe DB error: %s", e, exc_info=True)
+            logger.error("Uptime probe error: %s", e, exc_info=True)
 
         await asyncio.sleep(PROBE_INTERVAL)
 

@@ -1,5 +1,9 @@
 import json
+from pathlib import Path
+
 from pydantic_settings import BaseSettings
+
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
 class Settings(BaseSettings):
@@ -25,7 +29,7 @@ class Settings(BaseSettings):
     def dns_targets_list(self) -> list[str]:
         return json.loads(self.DEFAULT_DNS_TARGETS)
 
-    model_config = {"env_file": ".env", "extra": "ignore"}
+    model_config = {"env_file": str(_PROJECT_ROOT / ".env"), "extra": "ignore"}
 
 
 settings = Settings()

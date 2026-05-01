@@ -37,52 +37,55 @@ async def _bandwidth_loop() -> None:
     prev_time = time.monotonic()
 
     while _running:
-        await asyncio.sleep(POLL_INTERVAL)
+        try:
+            await asyncio.sleep(POLL_INTERVAL)
 
-        current_stats = await asyncio.to_thread(_get_interface_stats)
-        current_time = time.monotonic()
-        elapsed = current_time - prev_time
+            current_stats = await asyncio.to_thread(_get_interface_stats)
+            current_time = time.monotonic()
+            elapsed = current_time - prev_time
 
-        if elapsed <= 0:
+            if elapsed <= 0:
+                prev_stats = current_stats
+                prev_time = current_time
+                continue
+
+            interfaces = {}
+            total_download_mbps = 0.0
+            total_upload_mbps = 0.0
+
+            for name in current_stats:
+                if name not in prev_stats:
+                    continue
+                bytes_recv_diff = current_stats[name]["bytes_recv"] - prev_stats[name]["bytes_recv"]
+                bytes_sent_diff = current_stats[name]["bytes_sent"] - prev_stats[name]["bytes_sent"]
+
+                dl_mbps = round((bytes_recv_diff * 8) / (elapsed * 1_000_000), 3)
+                ul_mbps = round((bytes_sent_diff * 8) / (elapsed * 1_000_000), 3)
+
+                # Only include interfaces with any traffic
+                if dl_mbps > 0 or ul_mbps > 0 or name in prev_stats:
+                    interfaces[name] = {
+                        "download_mbps": dl_mbps,
+                        "upload_mbps": ul_mbps,
+                    }
+                    total_download_mbps += dl_mbps
+                    total_upload_mbps += ul_mbps
+
+            if ws_manager.active_connections:
+                await ws_manager.broadcast({
+                    "type": "bandwidth_update",
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "payload": {
+                        "total_download_mbps": round(total_download_mbps, 3),
+                        "total_upload_mbps": round(total_upload_mbps, 3),
+                        "interfaces": interfaces,
+                    },
+                })
+
             prev_stats = current_stats
             prev_time = current_time
-            continue
-
-        interfaces = {}
-        total_download_mbps = 0.0
-        total_upload_mbps = 0.0
-
-        for name in current_stats:
-            if name not in prev_stats:
-                continue
-            bytes_recv_diff = current_stats[name]["bytes_recv"] - prev_stats[name]["bytes_recv"]
-            bytes_sent_diff = current_stats[name]["bytes_sent"] - prev_stats[name]["bytes_sent"]
-
-            dl_mbps = round((bytes_recv_diff * 8) / (elapsed * 1_000_000), 3)
-            ul_mbps = round((bytes_sent_diff * 8) / (elapsed * 1_000_000), 3)
-
-            # Only include interfaces with any traffic
-            if dl_mbps > 0 or ul_mbps > 0 or name in prev_stats:
-                interfaces[name] = {
-                    "download_mbps": dl_mbps,
-                    "upload_mbps": ul_mbps,
-                }
-                total_download_mbps += dl_mbps
-                total_upload_mbps += ul_mbps
-
-        if ws_manager.active_connections:
-            await ws_manager.broadcast({
-                "type": "bandwidth_update",
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-                "payload": {
-                    "total_download_mbps": round(total_download_mbps, 3),
-                    "total_upload_mbps": round(total_upload_mbps, 3),
-                    "interfaces": interfaces,
-                },
-            })
-
-        prev_stats = current_stats
-        prev_time = current_time
+        except Exception as e:
+            logger.error("Bandwidth monitor error: %s", e, exc_info=True)
 
 
 def start_bandwidth_monitor() -> None:
