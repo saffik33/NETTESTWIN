@@ -41,7 +41,7 @@ if exist "frontend\dist" rmdir /s /q "frontend\dist"
 echo [OK] Done.
 
 echo [5/5] Removing desktop shortcut...
-if exist "%USERPROFILE%\Desktop\NetTest.lnk" del "%USERPROFILE%\Desktop\NetTest.lnk"
+powershell -NoProfile -Command "Remove-Item ([Environment]::GetFolderPath('Desktop') + '\NetTest.lnk') -ErrorAction SilentlyContinue"
 echo [OK] Done.
 
 echo.

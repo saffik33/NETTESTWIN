@@ -161,13 +161,13 @@ echo.
 :: ============================
 cd /d "%~dp0"
 echo [STEP 9/9] Creating desktop shortcut...
-set "SHORTCUT=%USERPROFILE%\Desktop\NetTest.lnk"
 set "TARGET=%~dp0start.bat"
 
 powershell -NoProfile -Command ^
-    "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut('%SHORTCUT%'); $s.TargetPath = '%TARGET%'; $s.WorkingDirectory = '%~dp0'; $s.IconLocation = '%SystemRoot%\System32\shell32.dll,14'; $s.Description = 'Launch NetTest Network Monitor'; $s.Save()"
+    "$desktop = [Environment]::GetFolderPath('Desktop'); $ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut(\"$desktop\NetTest.lnk\"); $s.TargetPath = '%TARGET%'; $s.WorkingDirectory = '%~dp0'; $s.IconLocation = '%SystemRoot%\System32\shell32.dll,14'; $s.Description = 'Launch NetTest Network Monitor'; $s.Save()"
 
-if exist "%SHORTCUT%" (
+powershell -NoProfile -Command "if (Test-Path ([Environment]::GetFolderPath('Desktop') + '\NetTest.lnk')) { exit 0 } else { exit 1 }"
+if %errorlevel% equ 0 (
     echo [OK] Desktop shortcut "NetTest" created.
 ) else (
     echo [WARN] Could not create desktop shortcut. You can run start.bat manually.
