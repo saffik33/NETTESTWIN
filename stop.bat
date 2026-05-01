@@ -7,7 +7,7 @@ echo.
 taskkill /f /im uvicorn.exe >nul 2>&1
 
 :: Strategy 2: Kill python processes listening on port 8000
-for /f "tokens=5" %%p in ('netstat -aon 2^>nul ^| findstr ":8000" ^| findstr "LISTENING"') do (
+for /f "tokens=5" %%p in ('netstat -aon 2^>nul ^| findstr ":8080" ^| findstr "LISTENING"') do (
     taskkill /f /pid %%p >nul 2>&1
 )
 

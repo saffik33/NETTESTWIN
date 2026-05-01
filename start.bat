@@ -28,11 +28,11 @@ call "backend\venv\Scripts\activate.bat"
 cd /d "%~dp0backend"
 
 :: Open browser after a short delay
-start "" cmd /c "timeout /t 3 /nobreak >nul && start http://localhost:8000"
+start "" cmd /c "timeout /t 3 /nobreak >nul && start http://localhost:8080"
 
 :: Start the server
-echo [INFO] Server starting at http://localhost:8000
+echo [INFO] Server starting at http://localhost:8080
 echo [INFO] A browser window will open automatically.
 echo [INFO] Keep this window open. Press Ctrl+C to stop.
 echo.
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8080
